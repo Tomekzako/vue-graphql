@@ -1,4 +1,11 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+const createToken = (user, secret, expiresIn) => {
+  return jwt.sign({ username: user.username, email: user.email }, secret, {
+    expiresIn
+  });
+};
 
 module.exports = {
   Query: {
@@ -37,6 +44,8 @@ module.exports = {
         throw new Error("Invalid password");
       }
       return user;
+
+      // return { token: createToken(user, process.env.SECRET, "1hr") };
     },
     signupUser: async (_, { username, email, password }, { User }) => {
       const user = await User.findOne({ username });
@@ -49,6 +58,8 @@ module.exports = {
         password
       }).save();
       return newUser;
+
+      // return { token: createToken(newUser, process.env.SECRET, "1hr") };
     }
   }
 };

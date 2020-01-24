@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import { gql } from "apollo-boost";
+import { GET_POSTS, SIGNIN_USER } from "../queries";
 import { defaultClient as apolloClient } from "../main.js";
 
 Vue.use(Vuex);
@@ -28,15 +28,7 @@ export default new Vuex.Store({
       commit("setLoading", true);
       apolloClient
         .query({
-          query: gql`
-            query {
-              getPosts {
-                _id
-                title
-                imageUrl
-              }
-            }
-          `
+          query: GET_POSTS
         })
         .then(({ data }) => {
           commit("setPosts", data.getPosts);
@@ -46,6 +38,17 @@ export default new Vuex.Store({
           commit("setLoading", false);
           console.log(err);
         });
+    },
+    signinUser: ({ commit }, payload) => {
+      apolloClient
+        .mutate({
+          mutation: SIGNIN_USER,
+          variables: payload
+        })
+        .then(({ data }) => {
+          console.log(data.signinUser);
+        })
+        .catch(err => console.log(err));
     }
   }
 });
